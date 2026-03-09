@@ -24,7 +24,12 @@ pipeline {
 
         stage('Verify DB Schema') {
             steps {
-                bat 'ping 127.0.0.1 -n 21 > nul'
+                script {
+                    bat 'ping 127.0.0.1 -n 31 > nul'
+                    retry(3) {
+                        bat 'docker exec calculator-db mariadb -uroot -pTest12 -e "SELECT 1" || (ping 127.0.0.1 -n 6 > nul && exit 1)'
+                    }
+                }
                 bat 'docker compose logs db --tail 200'
                 bat 'docker exec calculator-db mariadb -uroot -pTest12 -e "USE calc_data; SHOW TABLES; DESCRIBE calc_results;"'
             }
