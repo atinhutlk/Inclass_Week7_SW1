@@ -24,7 +24,7 @@ pipeline {
 
         stage('Verify DB Schema') {
             steps {
-                bat 'timeout /t 20 /nobreak'
+                bat 'ping 127.0.0.1 -n 21 > nul'
                 bat 'docker compose logs db --tail 200'
                 bat 'docker exec calculator-db mariadb -uroot -pTest12 -e "USE calc_data; SHOW TABLES; DESCRIBE calc_results;"'
             }
